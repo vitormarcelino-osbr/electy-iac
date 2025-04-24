@@ -8,6 +8,16 @@ resource "google_container_cluster" "primary" {
   subnetwork               = var.subnetwork_name
   deletion_protection      = false
 
+  addons_config {
+    gcs_fuse_csi_driver_config {
+      enabled = true
+    }
+  }
+
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
+
   private_cluster_config {
     enable_private_nodes    = var.enable_private_nodes
     enable_private_endpoint = var.enable_private_endpoint
@@ -49,6 +59,14 @@ resource "google_container_node_pool" "primary_nodes" {
     disk_size_gb = var.disk_size_gb
     disk_type    = var.disk_type
 
+    # gcfs_config {
+    #   enabled = true
+    # }
+
+    # workload_metadata_config {
+    #   mode = "GKE_METADATA"
+    # }
+    
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
